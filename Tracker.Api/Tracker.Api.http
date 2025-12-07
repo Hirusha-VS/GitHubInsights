@@ -1,0 +1,11 @@
+### Get current user
+GET http://localhost:5038/api/github/user
+Accept: application/json
+
+
+### Get repositories
+GET http://localhost:5038/api/github/repositories
+Accept: application/jsons
+
+### Get project v2 by owner and number
+GET http://localhost:5038/api/github/projectv2?owner=VariosystemsWorkspace&number=11

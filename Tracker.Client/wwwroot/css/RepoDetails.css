@@ -1,0 +1,170 @@
+﻿
+/* Container - Adjusted to be the main wrapper */
+.repo-dashboard-container {
+    max-width: 1300px; /* Wider to support more columns */
+    margin: 0 auto;
+    padding: 30px 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    background-color: #f7f9fc; /* Very light, cool background color */
+    color: #1e293b;
+}
+
+/* Header */
+.repo-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 5px;
+}
+
+.repo-header p {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+/* Back Button Style */
+.back-button {
+    /* Style to make it look like a secondary, navigational element */
+    background-color: #e2e8f0; /* Light gray background */
+    color: #475569; /* Darker text */
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px; /* Slightly rounded corners */
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-bottom: 20px; /* Space below the button, separating it from the header */
+    margin-top: 5px; /* Adjust spacing above the button */
+    display: inline-block;
+}
+
+    .back-button:hover {
+        background-color: #cbd5e1; /* Slightly darker gray on hover for feedback */
+    }
+
+    .back-button:active {
+        transform: translateY(1px); /* Slight press effect */
+    }
+/* Error message */
+.text-danger {
+    color: #ef4444; /* Brighter, modern red */
+    font-weight: 600; /* Semi-bold */
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 10px;
+    background-color: #fee2e2;
+    border-radius: 8px;
+}
+
+/* * STATS OVERVIEW BAR (Mimicking the "Team Overview" in the image)
+ */
+.stats-overview-bar {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    flex: 1; /* Distributes space evenly */
+    background-color: #ffffff;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    text-align: left; /* Aligns content left inside the card */
+    border-left: 5px solid #3b82f6; /* Accent color on the side */
+}
+
+    .stat-card h3 {
+        font-size: 0.9rem; /* Smaller title */
+        font-weight: 500;
+        color: #64748b; /* Soft gray for labels */
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card p {
+        font-size: 1.8rem; /* Large number */
+        font-weight: 700;
+        color: #3b82f6; /* Primary accent color for stats */
+    }
+
+
+/* * MAIN CONTENT COLUMNS (Mimicking the Milestones, Tasks, Schedule in the image)
+ */
+.content-columns-grid {
+    display: grid;
+    /* Create three responsive columns with a minimum width */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px; /* Spacing between columns */
+}
+
+/* Individual Column Card */
+.column-card {
+    background-color: #ffffff; /* White background for the card */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    /* Ensure cards take up full space in the grid item */
+    height: fit-content;
+}
+
+    .column-card h2 {
+        font-size: 1.4rem; /* Smaller header for the column title */
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #0f172a;
+        padding-bottom: 10px;
+        /* Line under the column title, like in the image */
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+/* * LIST ITEMS (Applied to the content within the columns)
+ */
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* General style for all list items (Commits, PRs, Issues) */
+.column-card li {
+    background-color: #f8fafc; /* Slightly off-white list background */
+    padding: 12px 15px;
+    border-radius: 8px;
+    box-shadow: none; /* Remove list item shadow, rely on card shadow */
+    margin-bottom: 10px;
+    transition: background-color 0.2s, border-left 0.2s;
+    border-left: 4px solid #e0e7ff; /* Subtle color indicator */
+    cursor: default;
+}
+
+    .column-card li:hover {
+        background-color: #ffffff; /* Brighter hover background */
+        box-shadow: none;
+        transform: none; /* Remove lift */
+        border-left: 4px solid #3b82f6; /* Primary color border on hover */
+    }
+
+    /* PR and Issue Title/Number */
+    .column-card li p {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    /* Author/Timestamp/State small text */
+    .column-card li small {
+        display: block;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 5px;
+        font-style: normal; /* Keep it clean */
+    }
+
+/* Specific commit styling */
+.commit-item strong {
+    font-weight: 600;
+    color: #0f172a;
+}

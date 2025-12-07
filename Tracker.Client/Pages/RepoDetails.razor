@@ -1,0 +1,148 @@
+﻿@page "/repo/{Owner}/{Repo}"
+@inject GitHubApiService GitHubService
+@inject NavigationManager NavigationManager
+@using Tracker.Client.Dtos
+@using Tracker.Client.Services
+
+<PageTitle>@Repo Repository Details</PageTitle>
+
+<div class="repo-dashboard-container">
+    @if (loading)
+    {
+        <p>Loading repository details...</p>
+    }
+    else if (error != null)
+    {
+        <p class="text-danger">@error</p>
+    }
+    else
+    {
+        <header class="repo-header">
+            <button class="back-button" @onclick="NavigateHome">
+                &larr; Back to Dashboard
+            </button>
+
+            <h1>@repoStats.Name</h1>
+            <p>Owned by: **@Owner** | Language: **@repoStats.Language**</p>
+        </header>
+
+        <div class="stats-overview-bar">
+            <div class="stat-card">
+                <h3>Stars ⭐</h3>
+                <p>@repoStats.Stars</p>
+            </div>
+            <div class="stat-card">
+                <h3>Forks 🍴</h3>
+                <p>@repoStats.Forks</p>
+            </div>
+            <div class="stat-card">
+                <h3>Open Issues ⚠️</h3>
+                <p>@repoStats.OpenIssues</p>
+            </div>
+            <div class="stat-card">
+                <h3>Open PRs ⚙️</h3>
+                <p>@repoStats.OpenPRs</p>
+            </div>
+        </div>
+
+        <div class="content-columns-grid">
+            <section class="column-card recent-commits-column">
+                <h2>Recent Commits</h2>
+                @if (commits.Any())
+                {
+                    <ul>
+                        @foreach (var commit in commits.Take(5))
+                        {
+                            <li class="commit-item">
+                                <p><strong>@commit.Message</strong></p>
+                                <small>@commit.AuthorName - (@commit.Date.ToString("MMM dd, yyyy HH:mm"))</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No recent commits</p>
+                }
+            </section>
+
+            <section class="column-card pull-requests-column">
+                <h2>Open Pull Requests</h2>
+                @if (pullRequests.Any())
+                {
+                    <ul>
+                        @foreach (var pr in pullRequests.Take(5))
+                        {
+                            <li class="pr-item">
+                                <p>#@pr.Number - **@pr.Title**</p>
+                                <small>By @pr.Author - State: @pr.State</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No open PRs</p>
+                }
+            </section>
+
+            <section class="column-card issues-column">
+                <h2>Open Issues</h2>
+                @if (issues.Any())
+                {
+                    <ul>
+                        @foreach (var issue in issues.Where(i => !i.IsPullRequest).Take(5))
+                        {
+                            <li class="issue-item">
+                                <p>#@issue.Number - **@issue.Title**</p>
+                                <small>Reported by @issue.Author</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No open issues</p>
+                }
+            </section>
+
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Owner { get; set; } = "";
+    [Parameter] public string Repo { get; set; } = "";
+
+    private bool loading = true;
+    private string? error;
+    private RepositoryStatsDto repoStats = new RepositoryStatsDto();
+    private List<CommitDto> commits = new List<CommitDto>();
+    private List<PullRequestDto> pullRequests = new List<PullRequestDto>();
+    private List<IssueDto> issues = new List<IssueDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            repoStats = await GitHubService.GetRepoStatsAsync(Owner, Repo);
+            commits = await GitHubService.GetCommitsAsync(Owner, Repo);
+            pullRequests = await GitHubService.GetPullRequestsAsync(Owner, Repo);
+            issues = await GitHubService.GetIssuesAsync(Owner, Repo);
+        }
+        catch (Exception ex)
+        {
+            error = $"Error loading repository details: {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+    private void NavigateHome()
+    {
+        // Navigates to the root path, which is your Dashboard page
+        NavigationManager.NavigateTo("/");
+    }
+
+}

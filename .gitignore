@@ -1,0 +1,14 @@
+# Visual Studio temporary files
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+
+# Build output folders
+bin/
+obj/
+
+# Other system files
+*.DS_Store
+ 

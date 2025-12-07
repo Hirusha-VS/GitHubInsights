@@ -1,0 +1,385 @@
+﻿@page "/"
+@using Tracker.Client.Services
+@using Tracker.Client.Dtos
+@inject GitHubApiService GitHubService
+@inject NavigationManager NavigationManager
+
+<PageTitle>GitHub Dashboard</PageTitle>
+
+<div class="dashboard">
+    <h1>GitHub Dashboard</h1>
+
+    @if (loading)
+    {
+        <div class="loading-spinner">
+            <p>Loading ProjectV2 data...</p>
+        </div>
+    }
+    else if (error != null)
+    {
+        <p class="text-danger">@error</p>
+    }
+    else
+    {
+        @if (project != null)
+        {
+            <!-- GitHub Insights Section -->
+            <section class="insights-section">
+                <div class="insights-header">
+                    <h2>GitHub Insights</h2>
+                    <div class="insights-meta">
+                        Last refresh: @DateTime.Now.ToString("hh:mm tt") | @selectedOrg - Project #@projectNumber
+                    </div>
+                </div>
+
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-label">Total Items</div>
+                        <div class="insight-value">@GetTotalItems()</div>
+                    </div>
+
+                    @foreach (var status in GetAllStatuses())
+                    {
+                        <div class="insight-card">
+                            <div class="insight-label">@status</div>
+                            <div class="insight-value">@GetItemsByStatus(status)</div>
+                        </div>
+                    }
+
+                    <div class="insight-card">
+                        <div class="insight-label">No Status</div>
+                        <div class="insight-value">@GetItemsWithoutStatus()</div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-label">Open PRs</div>
+                        <div class="insight-value">@GetOpenPullRequests()</div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-label">Merged PRs</div>
+                        <div class="insight-value">@GetMergedPullRequests()</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Developer Timeline Section -->
+            <section class="timeline-section">
+                <div class="timeline-header">
+                    <h2>Developer Timeline</h2>
+                    <div class="timeline-date">@DateTime.Now.ToString("MMMM dd, yyyy")</div>
+                </div>
+
+                <div class="timeline-columns">
+                    <!-- Backlog Column -->
+                    <div class="timeline-column">
+                        <div class="column-header">
+                            <span class="status-badge ready">Backlog</span>
+                            <span class="column-count">@GetItemsByStatus("Backlog")</span>
+                        </div>
+                        <ul class="task-list">
+                            @foreach (var item in GetItemsForColumn("Backlog"))
+                            {
+                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                    <div class="task-title">
+                                        <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
+                                            @GetItemTypeLabel(item.type)
+                                        </span>
+                                        @item.content?.title
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="task-assignee">
+                                            @GetAssigneeFromItem(item)
+                                        </span>
+                                        @if (item.content?.number != null)
+                                        {
+                                            <span>#@item.content.number</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- In Progress Column -->
+                    <div class="timeline-column">
+                        <div class="column-header">
+                            <span class="status-badge in-progress">In Progress</span>
+                            <span class="column-count">@GetItemsByStatus("In progress")</span>
+                        </div>
+                        <ul class="task-list">
+                            @foreach (var item in GetItemsForColumn("In progress"))
+                            {
+                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                    <div class="task-title">
+                                        <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
+                                            @GetItemTypeLabel(item.type)
+                                        </span>
+                                        @item.content?.title
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="task-assignee">
+                                            @GetAssigneeFromItem(item)
+                                        </span>
+                                        @if (item.content?.number != null)
+                                        {
+                                            <span>#@item.content.number</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- In Review Column -->
+                    <div class="timeline-column">
+                        <div class="column-header">
+                            <span class="status-badge unassigned">In Review</span>
+                            <span class="column-count">@GetItemsByStatus("In review")</span>
+                        </div>
+                        <ul class="task-list">
+                            @foreach (var item in GetItemsForColumn("In review"))
+                            {
+                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                    <div class="task-title">
+                                        <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
+                                            @GetItemTypeLabel(item.type)
+                                        </span>
+                                        @item.content?.title
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="task-assignee">
+                                            @GetAssigneeFromItem(item)
+                                        </span>
+                                        @if (item.content?.number != null)
+                                        {
+                                            <span>#@item.content.number</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Done Column -->
+                    <div class="timeline-column">
+                        <div class="column-header">
+                            <span class="status-badge ready">Done</span>
+                            <span class="column-count">@GetItemsByStatus("Done")</span>
+                        </div>
+                        <ul class="task-list">
+                            @foreach (var item in GetItemsForColumn("Done").Take(5))
+                            {
+                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                    <div class="task-title">
+                                        <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
+                                            @GetItemTypeLabel(item.type)
+                                        </span>
+                                        @item.content?.title
+                                    </div>
+                                    <div class="task-meta">
+                                        <span class="task-assignee">
+                                            @GetAssigneeFromItem(item)
+                                        </span>
+                                        @if (item.content?.number != null)
+                                        {
+                                            <span>#@item.content.number</span>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        }
+        else
+        {
+            <div class="empty-state">
+                <p>No ProjectV2 data found for @selectedOrg.</p>
+            </div>
+        }
+
+        <!-- Optional: Repositories Section -->
+        @if (repositories.Any())
+        {
+            <section class="repos-section">
+                <h2>Repositories (@repositories.Count)</h2>
+                <div class="repos-grid">
+                    @foreach (var repo in repositories.Take(6))
+                    {
+                        <div class="repo-card" @onclick="() => NavigateToRepo(repo)">
+                            <h3>@repo.Name</h3>
+                            <p>@(repo.Description ?? "No description")</p>
+                            <div>
+                                ⭐ @repo.Stars | 🔱 @repo.Forks | 📝 @repo.OpenIssues
+                            </div>
+                            <div>@(repo.Language ?? "N/A")</div>
+                            <small>Updated: @repo.UpdatedAt.ToString("MMM dd, yyyy")</small>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+    }
+</div>
+
+@code {
+    private bool loading = true;
+    private string? error;
+
+    // ProjectV2
+    private GitHubProjectV2ResponseDto? projectResponse;
+    private ProjectV2? project;
+    private int projectNumber = 11;  
+
+    // Repositories
+    private List<RepositoryDto> repositories = new List<RepositoryDto>();
+    private List<string> organizations = new();
+    private string? selectedOrg = "VariosystemsWorkspace";  
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+           
+            repositories = await GitHubService.GetRepositoriesAsync();
+            organizations = await GitHubService.GetOrganizationsAsync();
+            
+            
+            if (string.IsNullOrEmpty(selectedOrg) && organizations.Any())
+            {
+                selectedOrg = organizations.FirstOrDefault();
+            }
+
+            // Load ProjectV2
+            if (!string.IsNullOrEmpty(selectedOrg))
+            {
+                projectResponse = await GitHubService.GetProjectV2Async(selectedOrg, projectNumber,100);
+                project = projectResponse?.data?.organization?.projectV2;
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"Error loading data: {ex.Message}";
+            Console.WriteLine($"Error details: {ex}");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    // Helper methods for statistics
+    private int GetTotalItems()
+    {
+        if (project?.items?.nodes == null) return 0;
+        return project.items.nodes.Count;
+    }
+
+    private List<string> GetAllStatuses()
+    {
+        if (project?.items?.nodes == null) return new List<string>();
+        
+        return project.items.nodes
+            .SelectMany(item => item.fieldValues?.nodes ?? new List<FieldValue>())
+            .Where(f => f.field?.name == "Status" && !string.IsNullOrEmpty(f.name))
+            .Select(f => f.name!)
+            .Distinct()
+            .OrderBy(s => s)
+            .ToList();
+    }
+
+    private int GetItemsByStatus(string status)
+    {
+        if (project?.items?.nodes == null) return 0;
+        return project.items.nodes.Count(item =>
+            item.fieldValues?.nodes?.Any(f => 
+                f.field?.name == "Status" && f.name == status) == true);
+    }
+
+    private int GetItemsWithoutStatus()
+    {
+        if (project?.items?.nodes == null) return 0;
+        return project.items.nodes.Count(item =>
+            item.fieldValues?.nodes?.Any(f => f.field?.name == "Status") != true);
+    }
+
+    private int GetOpenPullRequests()
+    {
+        if (project?.items?.nodes == null) return 0;
+        return project.items.nodes.Count(i => 
+            i.type == "PULL_REQUEST" && 
+            i.content?.state?.ToLower() == "open");
+    }
+
+    private int GetMergedPullRequests()
+    {
+        if (project?.items?.nodes == null) return 0;
+        return project.items.nodes.Count(i => 
+            i.type == "PULL_REQUEST" && 
+            i.content?.merged == true);
+    }
+
+    // Helper methods for timeline columns
+    private List<ProjectItem> GetItemsForColumn(string? status)
+    {
+        if (project?.items?.nodes == null) return new List<ProjectItem>();
+
+        if (status == null)
+        {
+            // Unassigned items
+            return project.items.nodes
+                .Where(item => item.fieldValues?.nodes?.Any(f => f.field?.name == "Status") != true)
+                .ToList();
+        }
+
+        return project.items.nodes
+            .Where(item => item.fieldValues?.nodes?.Any(f => 
+                f.field?.name == "Status" && f.name == status) == true)
+            .ToList();
+    }
+
+    private string GetItemTypeBadgeClass(string type)
+    {
+        return type?.ToLower() switch
+        {
+            "issue" => "issue",
+            "pull_request" => "pr",
+            "draft_issue" => "draft",
+            _ => "draft"
+        };
+    }
+
+    private string GetItemTypeLabel(string type)
+    {
+        return type?.ToLower() switch
+        {
+            "issue" => "Issue",
+            "pull_request" => "PR",
+            "draft_issue" => "Draft",
+            _ => "Item"
+        };
+    }
+
+    private string GetAssigneeFromItem(ProjectItem item)
+    {
+        var assignee = item.fieldValues?.nodes?
+            .FirstOrDefault(f => f.field?.name == "Assignees" || f.field?.name == "Assignee");
+        
+        return assignee?.name ?? assignee?.text ?? "Unassigned";
+    }
+
+    private void OpenItemUrl(ProjectItem item)
+    {
+        if (!string.IsNullOrEmpty(item.content?.url))
+        {
+            NavigationManager.NavigateTo(item.content.url, true);
+        }
+    }
+
+    private void NavigateToRepo(RepositoryDto repo)
+    {
+        NavigationManager.NavigateTo($"/repo/{repo.Owner.Login}/{repo.Name}");
+    }
+}
