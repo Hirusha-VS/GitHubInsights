@@ -13,23 +13,7 @@ namespace Tracker.Client.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<UserDto> GetUserAsync() => 
-            await _httpClient.GetFromJsonAsync<UserDto>("api/github/user");
-
-        public async Task<List<RepositoryDto>> GetRepositoriesAsync() => 
-            await _httpClient.GetFromJsonAsync<List<RepositoryDto>>("api/github/repositories");
-
-        public async Task<RepositoryStatsDto> GetRepoStatsAsync(string owner, string repo) =>
-            await _httpClient.GetFromJsonAsync<RepositoryStatsDto>($"api/github/repositories/{owner}/{repo}/stats");
-
-        public async  Task<List<CommitDto>> GetCommitsAsync(string owner, string repo) =>
-            await _httpClient.GetFromJsonAsync<List<CommitDto>>($"api/github/repositories/{owner}/{repo}/commits");
-
-        public async Task<List<PullRequestDto>> GetPullRequestsAsync(string owner, string repo) =>
-            await _httpClient.GetFromJsonAsync<List<PullRequestDto>>($"api/github/repositories/{owner}/{repo}/pulls");
-
-        public async Task<List<IssueDto>> GetIssuesAsync(string owner, string repo) =>
-            await _httpClient.GetFromJsonAsync<List<IssueDto>>($"api/github/repositories/{owner}/{repo}/issues");
+        
 
         public async Task<List<string>> GetOrganizationsAsync() =>
             await _httpClient.GetFromJsonAsync<List<string>>("api/github/organizations");
@@ -45,9 +29,6 @@ namespace Tracker.Client.Services
                 PropertyNameCaseInsensitive = true
             });
         }
-
-
-
 
     }
 }
