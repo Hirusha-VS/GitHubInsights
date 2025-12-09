@@ -7,9 +7,7 @@
 <PageTitle>GitHub Dashboard</PageTitle>
 
 <div class="dashboard">
-    <h1>GitHub Dashboard</h1>
-
-    @if (loading)
+     @if (loading)
     {
         <div class="loading-spinner">
             <p>Loading ProjectV2 data...</p>
@@ -60,6 +58,10 @@
                         <div class="insight-label">Merged PRs</div>
                         <div class="insight-value">@GetMergedPullRequests()</div>
                     </div>
+                    <div class="insight-card">
+                        <div class="insight-label"> Open Issues</div>
+                        <div class="insight-value">@GetIssues()</div>
+                    </div>
                 </div>
             </section>
 
@@ -80,7 +82,7 @@
                         <ul class="task-list">
                             @foreach (var item in GetItemsForColumn("Backlog"))
                             {
-                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                <li class="task-item @GetOverdueClass(item)" @onclick="() => OpenItemUrl(item)">
                                     <div class="task-title">
                                         <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
                                             @GetItemTypeLabel(item.type)
@@ -88,13 +90,34 @@
                                         @item.content?.title
                                     </div>
                                     <div class="task-meta">
-                                        <span class="task-assignee">
-                                            @GetAssigneeFromItem(item)
-                                        </span>
-                                        @if (item.content?.number != null)
-                                        {
-                                            <span>#@item.content.number</span>
-                                        }
+                                        <div class="assignee-list">
+                                            @if (GetAssignees(item).Any())
+                                            {
+                                                @foreach (var assignee in GetAssignees(item))
+                                                {
+                                                    <img src="@assignee.avatarUrl"
+                                                         alt="@assignee.login"
+                                                         title="@(assignee.name ?? assignee.login)"
+                                                         class="assignee-avatar" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="task-assignee">Unassigned</span>
+                                            }
+                                        </div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            @if (GetOverdueInfo(item).IsOverdue || GetOverdueInfo(item).IsDueSoon)
+                                            {
+                                                <span class="overdue-badge @(GetOverdueInfo(item).IsOverdue ? "overdue" : "due-soon")">
+                                                    @GetOverdueInfo(item).Message
+                                                </span>
+                                            }
+                                            @if (item.content?.number != null)
+                                            {
+                                                <span>#@item.content.number</span>
+                                            }
+                                        </div>
                                     </div>
                                 </li>
                             }
@@ -110,7 +133,7 @@
                         <ul class="task-list">
                             @foreach (var item in GetItemsForColumn("In progress"))
                             {
-                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                <li class="task-item @GetOverdueClass(item)" @onclick="() => OpenItemUrl(item)">
                                     <div class="task-title">
                                         <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
                                             @GetItemTypeLabel(item.type)
@@ -118,13 +141,34 @@
                                         @item.content?.title
                                     </div>
                                     <div class="task-meta">
-                                        <span class="task-assignee">
-                                            @GetAssigneeFromItem(item)
-                                        </span>
-                                        @if (item.content?.number != null)
-                                        {
-                                            <span>#@item.content.number</span>
-                                        }
+                                        <div class="assignee-list">
+                                            @if (GetAssignees(item).Any())
+                                            {
+                                                @foreach (var assignee in GetAssignees(item))
+                                                {
+                                                    <img src="@assignee.avatarUrl"
+                                                         alt="@assignee.login"
+                                                         title="@(assignee.name ?? assignee.login)"
+                                                         class="assignee-avatar" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="task-assignee">Unassigned</span>
+                                            }
+                                        </div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            @if (GetOverdueInfo(item).IsOverdue || GetOverdueInfo(item).IsDueSoon)
+                                            {
+                                                <span class="overdue-badge @(GetOverdueInfo(item).IsOverdue ? "overdue" : "due-soon")">
+                                                    @GetOverdueInfo(item).Message
+                                                </span>
+                                            }
+                                            @if (item.content?.number != null)
+                                            {
+                                                <span>#@item.content.number</span>
+                                            }
+                                        </div>
                                     </div>
                                 </li>
                             }
@@ -140,7 +184,7 @@
                         <ul class="task-list">
                             @foreach (var item in GetItemsForColumn("In review"))
                             {
-                                <li class="task-item" @onclick="() => OpenItemUrl(item)">
+                                <li class="task-item @GetOverdueClass(item)" @onclick="() => OpenItemUrl(item)">
                                     <div class="task-title">
                                         <span class="task-type-badge @GetItemTypeBadgeClass(item.type)">
                                             @GetItemTypeLabel(item.type)
@@ -148,13 +192,34 @@
                                         @item.content?.title
                                     </div>
                                     <div class="task-meta">
-                                        <span class="task-assignee">
-                                            @GetAssigneeFromItem(item)
-                                        </span>
-                                        @if (item.content?.number != null)
-                                        {
-                                            <span>#@item.content.number</span>
-                                        }
+                                        <div class="assignee-list">
+                                            @if (GetAssignees(item).Any())
+                                            {
+                                                @foreach (var assignee in GetAssignees(item))
+                                                {
+                                                    <img src="@assignee.avatarUrl"
+                                                         alt="@assignee.login"
+                                                         title="@(assignee.name ?? assignee.login)"
+                                                         class="assignee-avatar" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="task-assignee">Unassigned</span>
+                                            }
+                                        </div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            @if (GetOverdueInfo(item).IsOverdue || GetOverdueInfo(item).IsDueSoon)
+                                            {
+                                                <span class="overdue-badge @(GetOverdueInfo(item).IsOverdue ? "overdue" : "due-soon")">
+                                                    @GetOverdueInfo(item).Message
+                                                </span>
+                                            }
+                                            @if (item.content?.number != null)
+                                            {
+                                                <span>#@item.content.number</span>
+                                            }
+                                        </div>
                                     </div>
                                 </li>
                             }
@@ -178,9 +243,22 @@
                                         @item.content?.title
                                     </div>
                                     <div class="task-meta">
-                                        <span class="task-assignee">
-                                            @GetAssigneeFromItem(item)
-                                        </span>
+                                        <div class="assignee-list">
+                                            @if (GetAssignees(item).Any())
+                                            {
+                                                @foreach (var assignee in GetAssignees(item))
+                                                {
+                                                    <img src="@assignee.avatarUrl"
+                                                         alt="@assignee.login"
+                                                         title="@(assignee.name ?? assignee.login)"
+                                                         class="assignee-avatar" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="task-assignee">Unassigned</span>
+                                            }
+                                        </div>
                                         @if (item.content?.number != null)
                                         {
                                             <span>#@item.content.number</span>
@@ -200,27 +278,7 @@
             </div>
         }
 
-        <!-- Optional: Repositories Section -->
-        @if (repositories.Any())
-        {
-            <section class="repos-section">
-                <h2>Repositories (@repositories.Count)</h2>
-                <div class="repos-grid">
-                    @foreach (var repo in repositories.Take(6))
-                    {
-                        <div class="repo-card" @onclick="() => NavigateToRepo(repo)">
-                            <h3>@repo.Name</h3>
-                            <p>@(repo.Description ?? "No description")</p>
-                            <div>
-                                ⭐ @repo.Stars | 🔱 @repo.Forks | 📝 @repo.OpenIssues
-                            </div>
-                            <div>@(repo.Language ?? "N/A")</div>
-                            <small>Updated: @repo.UpdatedAt.ToString("MMM dd, yyyy")</small>
-                        </div>
-                    }
-                </div>
-            </section>
-        }
+       
     }
 </div>
 
@@ -231,31 +289,30 @@
     // ProjectV2
     private GitHubProjectV2ResponseDto? projectResponse;
     private ProjectV2? project;
-    private int projectNumber = 11;  
+    private int projectNumber = 11; 
 
     // Repositories
-    private List<RepositoryDto> repositories = new List<RepositoryDto>();
+  //  private List<RepositoryDto> repositories = new List<RepositoryDto>();
     private List<string> organizations = new();
     private string? selectedOrg = "VariosystemsWorkspace";  
-
     protected override async Task OnInitializedAsync()
     {
         try
         {
-           
-            repositories = await GitHubService.GetRepositoriesAsync();
+            // Load Repositories
+          //  repositories = await GitHubService.GetRepositoriesAsync();
             organizations = await GitHubService.GetOrganizationsAsync();
-            
-            
+
+            // Use first org if not set
             if (string.IsNullOrEmpty(selectedOrg) && organizations.Any())
             {
                 selectedOrg = organizations.FirstOrDefault();
             }
 
-            // Load ProjectV2
+            // Load ProjectV2 - fetch up to 300 items (GitHub's max per request is 100, but you can adjust)
             if (!string.IsNullOrEmpty(selectedOrg))
             {
-                projectResponse = await GitHubService.GetProjectV2Async(selectedOrg, projectNumber,100);
+                projectResponse = await GitHubService.GetProjectV2Async(selectedOrg, projectNumber, 100);
                 project = projectResponse?.data?.organization?.projectV2;
             }
         }
@@ -280,7 +337,7 @@
     private List<string> GetAllStatuses()
     {
         if (project?.items?.nodes == null) return new List<string>();
-        
+
         return project.items.nodes
             .SelectMany(item => item.fieldValues?.nodes ?? new List<FieldValue>())
             .Where(f => f.field?.name == "Status" && !string.IsNullOrEmpty(f.name))
@@ -294,7 +351,7 @@
     {
         if (project?.items?.nodes == null) return 0;
         return project.items.nodes.Count(item =>
-            item.fieldValues?.nodes?.Any(f => 
+            item.fieldValues?.nodes?.Any(f =>
                 f.field?.name == "Status" && f.name == status) == true);
     }
 
@@ -308,18 +365,27 @@
     private int GetOpenPullRequests()
     {
         if (project?.items?.nodes == null) return 0;
-        return project.items.nodes.Count(i => 
-            i.type == "PULL_REQUEST" && 
+        return project.items.nodes.Count(i =>
+            i.type == "PULL_REQUEST" &&
             i.content?.state?.ToLower() == "open");
     }
 
     private int GetMergedPullRequests()
     {
         if (project?.items?.nodes == null) return 0;
-        return project.items.nodes.Count(i => 
-            i.type == "PULL_REQUEST" && 
+        return project.items.nodes.Count(i =>
+            i.type == "PULL_REQUEST" &&
             i.content?.merged == true);
     }
+
+    private int GetIssues()
+    {
+        if (project?.items?.nodes == null) return 0;
+        return project.items.nodes.Count(i =>
+            i.type == "ISSUE" &&
+            i.content?.state?.ToLower() == "open");
+    }
+
 
     // Helper methods for timeline columns
     private List<ProjectItem> GetItemsForColumn(string? status)
@@ -335,7 +401,7 @@
         }
 
         return project.items.nodes
-            .Where(item => item.fieldValues?.nodes?.Any(f => 
+            .Where(item => item.fieldValues?.nodes?.Any(f =>
                 f.field?.name == "Status" && f.name == status) == true)
             .ToList();
     }
@@ -364,10 +430,113 @@
 
     private string GetAssigneeFromItem(ProjectItem item)
     {
-        var assignee = item.fieldValues?.nodes?
-            .FirstOrDefault(f => f.field?.name == "Assignees" || f.field?.name == "Assignee");
-        
-        return assignee?.name ?? assignee?.text ?? "Unassigned";
+        var assignees = GetAssignees(item);
+        if (assignees.Any())
+        {
+            return string.Join(", ", assignees.Select(a => a.name ?? a.login));
+        }
+        return "Unassigned";
+    }
+
+    private List<Assignee> GetAssignees(ProjectItem item)
+    {
+        var assigneeList = new List<Assignee>();
+
+        // Method 1: Get assignees from content (Issue/PR assignees from GitHub)
+        if (item.content?.assignees?.nodes != null && item.content.assignees.nodes.Any())
+        {
+            Console.WriteLine($"Found {item.content.assignees.nodes.Count} assignees in content for: {item.content?.title}");
+            assigneeList.AddRange(item.content.assignees.nodes);
+        }
+
+        // Method 2: Get assignees from ProjectV2 custom field values
+        var userFields = item.fieldValues?.nodes?
+            .Where(f => f.__typename == "ProjectV2ItemFieldUserValue" && f.users?.nodes != null && f.users.nodes.Any())
+            .ToList();
+
+        if (userFields != null && userFields.Any())
+        {
+            Console.WriteLine($"Found {userFields.Count} user fields for: {item.content?.title}");
+            foreach (var userField in userFields)
+            {
+                Console.WriteLine($"  Field: {userField.field?.name}, Users: {userField.users?.nodes?.Count ?? 0}");
+                if (userField.users?.nodes != null)
+                {
+                    assigneeList.AddRange(userField.users.nodes.Select(u => new Assignee
+                    {
+                        login = u.login,
+                        name = u.name,
+                        avatarUrl = u.avatarUrl
+                    }));
+                }
+            }
+        }
+
+        // Remove duplicates by login
+        var uniqueAssignees = assigneeList
+            .Where(a => !string.IsNullOrEmpty(a.login))
+            .GroupBy(a => a.login)
+            .Select(g => g.First())
+            .ToList();
+
+        if (uniqueAssignees.Any())
+        {
+            Console.WriteLine($"Total unique assignees for '{item.content?.title}': {uniqueAssignees.Count}");
+        }
+        else
+        {
+            Console.WriteLine($"No assignees found for: {item.content?.title}");
+        }
+
+        return uniqueAssignees;
+    }
+
+    private (bool IsOverdue, bool IsDueSoon, string Message) GetOverdueInfo(ProjectItem item)
+    {
+        var endDateField = item.fieldValues?.nodes?
+            .FirstOrDefault(f => f.field?.name == "End date" && !string.IsNullOrEmpty(f.date));
+
+        if (endDateField == null || string.IsNullOrEmpty(endDateField.date))
+        {
+            return (false, false, "");
+        }
+
+        if (!DateTime.TryParse(endDateField.date, out var endDate))
+        {
+            return (false, false, "");
+        }
+
+        var today = DateTime.Today;
+        var daysUntilDue = (endDate.Date - today).Days;
+
+        if (daysUntilDue < 0)
+        {
+            // Overdue
+            var daysOverdue = Math.Abs(daysUntilDue);
+            return (true, false, $"Overdue by {daysOverdue} day{(daysOverdue != 1 ? "s" : "")}");
+        }
+        else if (daysUntilDue <= 2)
+        {
+            // Due soon (within 2 days)
+            if (daysUntilDue == 0)
+                return (false, true, "Due today");
+            else if (daysUntilDue == 1)
+                return (false, true, "Due tomorrow");
+            else
+                return (false, true, $"Due in {daysUntilDue} days");
+        }
+
+        return (false, false, "");
+    }
+
+    private string GetOverdueClass(ProjectItem item)
+    {
+        var overdueInfo = GetOverdueInfo(item);
+        if (overdueInfo.IsOverdue)
+            return "overdue";
+        else if (overdueInfo.IsDueSoon)
+            return "due-soon";
+        return "";
     }
 
     private void OpenItemUrl(ProjectItem item)
@@ -378,8 +547,8 @@
         }
     }
 
-    private void NavigateToRepo(RepositoryDto repo)
-    {
-        NavigationManager.NavigateTo($"/repo/{repo.Owner.Login}/{repo.Name}");
-    }
+    // private void NavigateToRepo(RepositoryDto repo)
+    // {
+    //     NavigationManager.NavigateTo($"/repo/{repo.Owner.Login}/{repo.Name}");
+    // }
 }

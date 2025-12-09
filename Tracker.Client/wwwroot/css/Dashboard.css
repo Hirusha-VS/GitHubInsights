@@ -188,6 +188,7 @@
     border: 1px solid #e2e8f0;
     transition: all 0.2s ease;
     cursor: pointer;
+    position: relative;
 }
 
     .task-item:hover {
@@ -198,6 +199,16 @@
 
     .task-item:last-child {
         margin-bottom: 0;
+    }
+
+    .task-item.overdue {
+        border-left: 4px solid #ef4444;
+        background-color: #fef2f2;
+    }
+
+    .task-item.due-soon {
+        border-left: 4px solid #f59e0b;
+        background-color: #fffbeb;
     }
 
 .task-title {
@@ -216,6 +227,9 @@
     align-items: center;
     font-size: 0.8rem;
     color: #64748b;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .task-assignee {
@@ -223,6 +237,44 @@
     align-items: center;
     gap: 6px;
 }
+
+.assignee-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+}
+
+.assignee-list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.overdue-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+    .overdue-badge.overdue {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .overdue-badge.due-soon {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .overdue-badge.on-time {
+        background-color: #dcfce7;
+        color: #166534;
+    }
 
 .task-type-badge {
     padding: 2px 8px;

@@ -40,6 +40,13 @@
     public class ItemConnection
     {
         public List<ProjectItem> nodes { get; set; } = new();
+        public PageInfo pageInfo { get; set; } = new();
+    }
+
+    public class PageInfo
+    {
+        public bool hasNextPage { get; set; }
+        public string endCursor { get; set; }
     }
 
     public class ProjectItem
@@ -53,16 +60,23 @@
     public class Content
     {
         public string title { get; set; }
-
-        // DraftIssue has no URL
         public string? url { get; set; }
-
-        // DraftIssue has no number
         public int? number { get; set; }
-
-        // Issue/PR only
         public string? state { get; set; }
         public bool? merged { get; set; }
+        public AssigneeConnection? assignees { get; set; }
+    }
+
+    public class AssigneeConnection
+    {
+        public List<Assignee> nodes { get; set; } = new();
+    }
+
+    public class Assignee
+    {
+        public string login { get; set; }
+        public string name { get; set; }
+        public string avatarUrl { get; set; }
     }
 
     public class FieldValueConnection
@@ -86,6 +100,21 @@
 
         // For DateValue
         public string? date { get; set; }
+
+        // For UserValue 
+        public UserConnection? users { get; set; }
+    }
+
+    public class UserConnection
+    {
+        public List<User> nodes { get; set; } = new();
+    }
+
+    public class User
+    {
+        public string login { get; set; }
+        public string name { get; set; }
+        public string avatarUrl { get; set; }
     }
 
     public class Field
@@ -93,5 +122,5 @@
         public string __typename { get; set; }
         public string name { get; set; }
     }
-}
 
+}
