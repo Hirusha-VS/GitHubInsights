@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Tracker.Api.Services;
 
-namespace Tracker.Api.Controllers
+namespace Tracker.Api.Endponits
 {
     [ApiController]
     [Route("api/github")]
@@ -15,12 +15,12 @@ namespace Tracker.Api.Controllers
             _gitHubService = gitHubService ?? throw new ArgumentNullException(nameof(gitHubService));
         }
 
-        [HttpGet("organizations")]
-        public async Task<IActionResult> GetOrgs()
-        {
-            var orgs = await _gitHubService.GetUserOrganizationsAsync() ;
-            return Ok(orgs);
-        }
+        //[HttpGet("organizations")]
+        //public async Task<IActionResult> GetOrgs()
+        //{
+        //    var orgs = await _gitHubService.GetUserOrganizationsAsync() ;
+        //    return Ok(orgs);
+        //}
 
 
         [HttpGet("projectv2")]

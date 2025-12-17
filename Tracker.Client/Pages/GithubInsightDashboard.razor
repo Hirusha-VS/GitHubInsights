@@ -1,0 +1,326 @@
+﻿@page "/GithubInsightDashboard"
+@using Tracker.Client.Components
+@using Tracker.Client.Services
+@using Tracker.Client.Dtos
+@inject GitHubApiService GitHubService
+@inject NavigationManager NavigationManager
+
+<PageTitle>VS - Workspace Insights</PageTitle>
+
+<div class="dashboard-container">
+    @if (loading)
+    {
+        <div class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner-ring"></div>
+                <p class="loading-text">Loading ProjectV2 data...</p>
+            </div>
+        </div>
+    }
+    else if (error != null)
+    {
+        <div class="error-container">
+            <p class="error-message">@error</p>
+            <button class="retry-button" @onclick="LoadData">Retry</button>
+        </div>
+    }
+    else if (project != null)
+    {
+        <!-- 3 Column Grid Layout -->
+        <div class="dashboard-grid">
+
+            <!-- LEFT COLUMN: GitHub Insights -->
+            <div class="left-column">
+                <GitHubInsights ProjectItems="@projectItems"
+                                TotalItems="@projectItems.Count"
+                                SelectedOrg="@selectedOrg"
+                                ProjectNumber="@projectNumber"
+                                ProjectUrl="@(project?.url ?? "")" />
+            </div>
+
+            <!-- MIDDLE COLUMN: Overview + Workload (Side by Side) -->
+            <div class="middle-column">
+                <TodayOverview TasksDueToday="@GetTasksDueSoon()"
+                               OverdueTasks="@GetOverdueTasks()"
+                               OverdueCount="@GetOverdueTasks().Count"
+                               OnItemClick="@OpenItemUrl" />
+
+                <DeveloperWorkloadCard DeveloperWorkloads="@GetDeveloperWorkloads()" />
+            </div>
+
+            <!-- RIGHT COLUMN: Today's Tasks -->
+            <div class="right-column">
+                <TodayTasksList ProjectItems="@projectItems"
+                                OnItemClick="@OpenItemUrl" />
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>No ProjectV2 data found for @selectedOrg.</p>
+        </div>
+    }
+</div>
+
+@code {
+    private bool loading = true;
+    private string? error;
+
+    // ProjectV2
+    private GitHubProjectV2ResponseDto? projectResponse;
+    private ProjectV2? project;
+    private List<ProjectItem> projectItems = new();
+    private int projectNumber = 11;
+
+    //private List<string> organizations = new();
+    private string? selectedOrg = "VariosystemsWorkspace";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        loading = true;
+        error = null;
+
+        try
+        {
+            // organizations = await GitHubService.GetOrganizationsAsync();
+
+            // if (string.IsNullOrEmpty(selectedOrg) && organizations.Any())
+            // {
+            //     selectedOrg = organizations.FirstOrDefault();
+            // }
+
+            if (!string.IsNullOrEmpty(selectedOrg))
+            {
+                projectResponse = await GitHubService.GetProjectV2Async(selectedOrg, projectNumber, 100);
+                project = projectResponse?.data?.organization?.projectV2;
+
+                if (project?.items?.nodes != null)
+                {
+                    projectItems = project.items.nodes;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"Error loading data: {ex.Message}";
+            Console.WriteLine($"Error details: {ex}");
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void OpenItemUrl(ProjectItem item)
+    {
+        if (!string.IsNullOrEmpty(item.content?.url))
+        {
+            NavigationManager.NavigateTo(item.content.url, true);
+        }
+    }
+
+    // ========== SERVICE METHODS (Previously in TaskAnalyticsService) ==========
+
+    private List<ProjectItem> GetTasksDueSoon()
+    {
+        if (projectItems == null) return new List<ProjectItem>();
+
+        return projectItems
+            .Where(item =>
+            {
+                var overdueInfo = GetOverdueInfoInternal(item);
+                return overdueInfo.IsDueSoon;
+            })
+            .ToList();
+    }
+
+    private List<ProjectItem> GetOverdueTasks()
+    {
+        if (projectItems == null) return new List<ProjectItem>();
+
+        return projectItems
+            .Where(item => GetOverdueInfoInternal(item).IsOverdue)
+            .OrderBy(item =>
+            {
+                var endDate = GetEndDateInternal(item);
+                return endDate ?? DateTime.MaxValue;
+            })
+            .ToList();
+    }
+
+    // ========== SERVICE METHODS (Previously in WorkloadCalculationService) ==========
+
+    private List<DeveloperWorkloadDto> GetDeveloperWorkloads()
+    {
+        if (projectItems == null) return new List<DeveloperWorkloadDto>();
+
+        var allAssignees = projectItems
+            .SelectMany(item => GetAllAssigneesInternal(item))
+            .GroupBy(a => a.login)
+            .Select(g => g.First())
+            .ToList();
+
+        var workloads = new List<DeveloperWorkloadDto>();
+
+        foreach (var assignee in allAssignees)
+        {
+            var assignedItems = projectItems
+                .Where(item => GetAllAssigneesInternal(item).Any(a => a.login == assignee.login))
+                .ToList();
+
+            var doneTasks = assignedItems.Count(item => GetStatusInternal(item) == "Done");
+            var inProgressTasks = assignedItems.Count(item => GetStatusInternal(item) == "In progress");
+            var inReviewTasks = assignedItems.Count(item => GetStatusInternal(item) == "In review");
+            var backlogTasks = assignedItems.Count(item => GetStatusInternal(item) == "Backlog");
+            var overdueTasks = assignedItems.Count(item => GetOverdueInfoInternal(item).IsOverdue);
+            var totalTasks = assignedItems.Count;
+
+            workloads.Add(new DeveloperWorkloadDto
+            {
+                Login = assignee.login,
+                Name = assignee.name ?? assignee.login,
+                AvatarUrl = assignee.avatarUrl,
+                TotalTasks = totalTasks,
+                DoneTasks = doneTasks,
+                InProgressTasks = inProgressTasks,
+                InReviewTasks = inReviewTasks,
+                BacklogTasks = backlogTasks,
+                OverdueTasks = overdueTasks,
+                CompletionPercentage = CalculateCompletionRate(doneTasks, totalTasks),
+                DonePercentage = CalculateDistribution(doneTasks, totalTasks),
+                InProgressPercentage = CalculateDistribution(inProgressTasks, totalTasks),
+                InReviewPercentage = CalculateDistribution(inReviewTasks, totalTasks),
+                BacklogPercentage = CalculateDistribution(backlogTasks, totalTasks)
+            });
+        }
+
+        return workloads;
+    }
+
+    // ========== INTERNAL HELPER METHODS ==========
+
+    private class OverdueInfoInternal
+    {
+        public bool IsOverdue { get; set; }
+        public bool IsDueSoon { get; set; }
+        public string Message { get; set; } = string.Empty;
+    }
+
+    private List<Assignee> GetAllAssigneesInternal(ProjectItem item)
+    {
+        var assigneeList = new List<Assignee>();
+
+        if (item.content?.assignees?.nodes != null && item.content.assignees.nodes.Any())
+        {
+            assigneeList.AddRange(item.content.assignees.nodes);
+        }
+
+        var userFields = item.fieldValues?.nodes?
+            .Where(f => f.__typename == "ProjectV2ItemFieldUserValue" && f.users?.nodes != null)
+            .ToList();
+
+        if (userFields != null)
+        {
+            foreach (var userField in userFields)
+            {
+                if (userField.users?.nodes != null)
+                {
+                    assigneeList.AddRange(userField.users.nodes.Select(u => new Assignee
+                    {
+                        login = u.login,
+                        name = u.name,
+                        avatarUrl = u.avatarUrl
+                    }));
+                }
+            }
+        }
+
+        return assigneeList
+            .Where(a => !string.IsNullOrEmpty(a.login))
+            .GroupBy(a => a.login)
+            .Select(g => g.First())
+            .ToList();
+    }
+
+    private string GetStatusInternal(ProjectItem item)
+    {
+        var statusField = item.fieldValues?.nodes?
+            .FirstOrDefault(f => f.field?.name == "Status" && !string.IsNullOrEmpty(f.name));
+        return statusField?.name ?? string.Empty;
+    }
+
+    private DateTime? GetEndDateInternal(ProjectItem item)
+    {
+        var endDateField = item.fieldValues?.nodes?
+            .FirstOrDefault(f => f.field?.name == "End date" && !string.IsNullOrEmpty(f.date));
+
+        if (endDateField == null || string.IsNullOrEmpty(endDateField.date))
+            return null;
+
+        if (DateTime.TryParse(endDateField.date, out var endDate))
+            return endDate;
+
+        return null;
+    }
+
+    private OverdueInfoInternal GetOverdueInfoInternal(ProjectItem item)
+    {
+        var endDate = GetEndDateInternal(item);
+        if (!endDate.HasValue)
+        {
+            return new OverdueInfoInternal { IsOverdue = false, IsDueSoon = false, Message = "" };
+        }
+
+        var status = GetStatusInternal(item);
+        if (status == "Done" || item.content?.state?.ToLower() == "closed" || item.content?.merged == true)
+        {
+            return new OverdueInfoInternal { IsOverdue = false, IsDueSoon = false, Message = "" };
+        }
+
+        var today = DateTime.Today;
+        var daysUntilDue = (endDate.Value.Date - today).Days;
+
+        if (daysUntilDue < 0)
+        {
+            var daysOverdue = Math.Abs(daysUntilDue);
+            return new OverdueInfoInternal
+            {
+                IsOverdue = true,
+                IsDueSoon = false,
+                Message = $"Overdue by {daysOverdue} day{(daysOverdue != 1 ? "s" : "")}"
+            };
+        }
+        else if (daysUntilDue <= 2)
+        {
+            if (daysUntilDue == 0)
+                return new OverdueInfoInternal { IsOverdue = false, IsDueSoon = true, Message = "Due today" };
+            else if (daysUntilDue == 1)
+                return new OverdueInfoInternal { IsOverdue = false, IsDueSoon = true, Message = "Due tomorrow" };
+            else
+                return new OverdueInfoInternal { IsOverdue = false, IsDueSoon = true, Message = $"Due in {daysUntilDue} days" };
+        }
+
+        return new OverdueInfoInternal { IsOverdue = false, IsDueSoon = false, Message = "" };
+    }
+
+    // ========== PERCENTAGE CALCULATION ==========
+
+    private int CalculateCompletionRate(int done, int total)
+    {
+        if (total == 0) return 0;
+        return (int)Math.Round((double)done / total * 100);
+    }
+
+    private int CalculateDistribution(int count, int total)
+    {
+        if (total == 0) return 0;
+        return (int)Math.Round((double)count / total * 100);
+    }
+}

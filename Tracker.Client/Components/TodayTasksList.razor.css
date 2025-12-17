@@ -1,0 +1,256 @@
+﻿/* TodayTasksList.razor.css - Scoped styles for today's tasks list */
+
+.tasks-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.section-title {
+    color: #1a1a1a;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.section-date {
+    color: #666;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Tasks grid */
+.tasks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Task card */
+.task-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .task-card:hover {
+        border-color: #2196f3;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .task-card.overdue {
+        border-left: 3px solid #f44336;
+        background: #ffebee;
+    }
+
+    .task-card.due-soon {
+        border-left: 3px solid #ff9800;
+        background: #fff3e0;
+    }
+
+/* Task header */
+.task-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.type-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+    .type-badge.issue {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .type-badge.pr {
+        background: #ddd6fe;
+        color: #5b21b6;
+    }
+
+    .type-badge.draft {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+    .status-badge.backlog {
+        background: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .status-badge.in-progress {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status-badge.in-review {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .status-badge.done {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+.task-number {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Task title */
+.task-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Task footer */
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.assignees-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+}
+
+/* Assignee chip */
+.assignee-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px 2px 2px;
+    background: #f5f5f5;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+    .assignee-chip:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+    }
+
+.assignee-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.assignee-name {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.unassigned-chip {
+    padding: 4px 10px;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: #999;
+    font-style: italic;
+}
+
+/* Due badge */
+.due-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+    .due-badge.overdue {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .due-badge.due-today,
+    .due-badge.due-soon {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+    border-radius: 8px;
+    border: 2px dashed #cbd5e1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.4;
+}
+
+.empty-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.empty-subtext {
+    font-size: 0.85rem;
+    color: #666;
+}

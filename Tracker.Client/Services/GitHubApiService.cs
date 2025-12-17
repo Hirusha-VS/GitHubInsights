@@ -15,20 +15,29 @@ namespace Tracker.Client.Services
         }
         
 
-        public async Task<List<string>> GetOrganizationsAsync() =>
-            await _httpClient.GetFromJsonAsync<List<string>>("api/github/organizations");
-
-        public async Task<GitHubProjectV2ResponseDto> GetProjectV2Async(string owner, int projectNumber, int itemsFirst = 50)
+        
+        private static readonly JsonSerializerOptions _jsonOptions = new()
         {
-            var response = await _httpClient.GetAsync($"api/github/projectv2?owner={owner}&number={projectNumber}&itemsFirst={itemsFirst}");
+            PropertyNameCaseInsensitive = true
+        };
+
+        public async Task<GitHubProjectV2ResponseDto> GetProjectV2Async(
+            string owner,
+            int projectNumber,
+            int itemsFirst = 50)
+        {
+            var response = await _httpClient.GetAsync(
+                $"api/github/projectv2?owner={owner}&number={projectNumber}&itemsFirst={itemsFirst}");
+
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<GitHubProjectV2ResponseDto>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+
+            var result = JsonSerializer.Deserialize<GitHubProjectV2ResponseDto>(json, _jsonOptions);
+
+            return result ?? throw new JsonException("Deserialization returned null.");
         }
+
 
     }
 }

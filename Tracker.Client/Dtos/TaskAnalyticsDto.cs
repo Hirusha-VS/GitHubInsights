@@ -1,8 +1,6 @@
-﻿using Tracker.Client.Dtos;
-
-namespace Tracker.Client.Models
+﻿namespace Tracker.Client.Dtos
 {
-    public class TaskAnalytics
+    public class TaskAnalyticsDto
     {
         public int TotalItems { get; set; }
         public int DueToday { get; set; }

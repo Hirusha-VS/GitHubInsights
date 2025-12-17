@@ -1,30 +1,29 @@
-﻿using Octokit;
+﻿//using Octokit;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Tracker.Api.Dtos;
-using static System.Net.WebRequestMethods;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace Tracker.Api.Services
 {
     public class GitHubService : IGitHubService
     {
-        private readonly GitHubClient _client;
+       // private readonly GitHubClient _client;
 
         //to access graphql api
         private readonly HttpClient _httpClient;
 
-        public GitHubService(HttpClient http,IConfiguration config)
+        public GitHubService(HttpClient http, IConfiguration config)
         {
             _httpClient = http;
             var token = config["GitHub:Token"];
 
-            _client = new GitHubClient(new Octokit.ProductHeaderValue("GitHubDashboard"))
-            {
-                Credentials = new Credentials(token)
-            };
+            //_client = new GitHubClient(new Octokit.ProductHeaderValue("GitHubDashboard"))
+            //{
+            //    Credentials = new Credentials(token)
+            //};
 
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
@@ -273,20 +272,20 @@ namespace Tracker.Api.Services
 
         private class GraphQLError
         {
-            public string message { get; set; }
-            public string type { get; set; }
+            public string? message { get; set; }
+            public string? type { get; set; }
         }
 
 
 
         //REST API METHODS
        
-        public async Task<List<string>> GetUserOrganizationsAsync()
-        {
-            var orgs = await _client.Organization.GetAllForCurrent();
+        //public async Task<List<string>> GetUserOrganizationsAsync()
+        //{
+        //    var orgs = await _client.Organization.GetAllForCurrent();
 
-            return orgs.Select(o => o.Login).ToList();
-        }
+        //    return orgs.Select(o => o.Login).ToList();
+        //}
         
     }
 }

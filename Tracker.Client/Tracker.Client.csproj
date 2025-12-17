@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extensions\**" />
+    <Compile Remove="Helpers\**" />
+    <Compile Remove="Models\**" />
+    <Content Remove="Extensions\**" />
+    <Content Remove="Helpers\**" />
+    <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Extensions\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Extensions\**" />
+    <None Remove="Helpers\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazor-ApexCharts" Version="6.0.2" />
     <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />

@@ -1,0 +1,226 @@
+﻿@using Tracker.Client.Dtos
+
+<!-- Today's Tasks Overview Section -->
+<section class="overview-section">
+    <div class="section-header">
+        <h2 class="section-title">📅 Today's Overview</h2>
+        <div class="section-date">@DateTime.Now.ToString("dddd, MMMM dd, yyyy")</div>
+    </div>
+
+    <div class="summary-grid">
+        @{
+            var dueTodayCount = TasksDueToday.Count(i => GetOverdueInfo(i).Message == "Due today");
+            var dueSoonCount = TasksDueToday.Count(i => GetOverdueInfo(i).Message != "Due today");
+        }
+
+        <!-- Due Today (Critical - Red) -->
+        <div class="summary-card critical">
+            <div class="card-info">
+                <div class="card-label">Due Today</div>
+                <div class="card-value">@dueTodayCount</div>
+            </div>
+        </div>
+
+        <!-- Due Soon (Tomorrow + 2 days - Yellow) -->
+        <div class="summary-card warning">
+            <div class="card-info">
+                <div class="card-label">Due Soon</div>
+                <div class="card-value">@dueSoonCount</div>
+                <div class="card-subtext">Next 1-2 days</div>
+            </div>
+        </div>
+
+        <!-- Overdue -->
+        <div class="summary-card danger">
+            <div class="card-info">
+                <div class="card-label">Overdue</div>
+                <div class="card-value">@OverdueCount</div>
+            </div>
+        </div>
+    </div>
+
+    @if (TasksDueToday.Any() || OverdueTasks.Any())
+    {
+        <div class="urgent-section">
+            <h3 class="urgent-title">Urgent Tasks Requiring Attention</h3>
+            <div class="urgent-grid">
+                @foreach (var item in OverdueTasks.Concat(TasksDueToday).Take(6))
+                {
+                    var overdueInfo = GetOverdueInfo(item);
+
+                    <div class="urgent-card" @onclick="() => OnItemClick.InvokeAsync(item)">
+                        <div class="urgent-header">
+                            <span class="type-badge @GetItemTypeBadgeClass(item)">
+                                @GetItemTypeLabel(item)
+                            </span>
+                            <span class="urgent-badge @(overdueInfo.IsOverdue ? "overdue" : "due-soon")">
+                                @overdueInfo.Message
+                            </span>
+                        </div>
+                        <div class="task-title">@item.content?.title</div>
+                        <div class="task-footer">
+                            <div class="assignee-list">
+                                @if (GetAllAssignees(item).Any())
+                                {
+                                    @foreach (var assignee in GetAllAssignees(item).Take(3))
+                                    {
+                                        <img src="@assignee.avatarUrl"
+                                             alt="@assignee.login"
+                                             title="@(assignee.name ?? assignee.login)"
+                                             class="assignee-avatar" />
+                                    }
+                                    @if (GetAllAssignees(item).Count > 3)
+                                    {
+                                        <span class="more-assignees">+@(GetAllAssignees(item).Count - 3)</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="unassigned">Unassigned</span>
+                                }
+                            </div>
+                            <span class="item-number">#@item.content?.number</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter]
+    public List<ProjectItem> TasksDueToday { get; set; } = new();
+
+    [Parameter]
+    public List<ProjectItem> OverdueTasks { get; set; } = new();
+
+    [Parameter]
+    public int OverdueCount { get; set; }
+
+    [Parameter]
+    public EventCallback<ProjectItem> OnItemClick { get; set; }
+
+    // ========== EXTENSION METHODS (Previously in ProjectItemExtensions) ==========
+
+    private List<Assignee> GetAllAssignees(ProjectItem item)
+    {
+        var assigneeList = new List<Assignee>();
+
+        if (item.content?.assignees?.nodes != null && item.content.assignees.nodes.Any())
+        {
+            assigneeList.AddRange(item.content.assignees.nodes);
+        }
+
+        var userFields = item.fieldValues?.nodes?
+            .Where(f => f.__typename == "ProjectV2ItemFieldUserValue" && f.users?.nodes != null && f.users.nodes.Any())
+            .ToList();
+
+        if (userFields != null && userFields.Any())
+        {
+            foreach (var userField in userFields)
+            {
+                if (userField.users?.nodes != null)
+                {
+                    assigneeList.AddRange(userField.users.nodes.Select(u => new Assignee
+                    {
+                        login = u.login,
+                        name = u.name,
+                        avatarUrl = u.avatarUrl
+                    }));
+                }
+            }
+        }
+
+        return assigneeList
+            .Where(a => !string.IsNullOrEmpty(a.login))
+            .GroupBy(a => a.login)
+            .Select(g => g.First())
+            .ToList();
+    }
+
+    private string GetItemTypeLabel(ProjectItem item)
+    {
+        return item.type?.ToLower() switch
+        {
+            "issue" => "Issue",
+            "pull_request" => "PR",
+            "draft_issue" => "Draft",
+            _ => "Item"
+        };
+    }
+
+    private string GetItemTypeBadgeClass(ProjectItem item)
+    {
+        return item.type?.ToLower() switch
+        {
+            "issue" => "issue",
+            "pull_request" => "pr",
+            "draft_issue" => "draft",
+            _ => "draft"
+        };
+    }
+
+    // ========== HELPER METHODS ==========
+
+    private OverdueInfoDto GetOverdueInfo(ProjectItem item)
+    {
+        var endDate = GetEndDate(item);
+        if (!endDate.HasValue)
+        {
+            return new OverdueInfoDto { IsOverdue = false, IsDueSoon = false, Message = "" };
+        }
+
+        var status = GetStatus(item);
+        if (status == "Done" || item.content?.state?.ToLower() == "closed" || item.content?.merged == true)
+        {
+            return new OverdueInfoDto { IsOverdue = false, IsDueSoon = false, Message = "" };
+        }
+
+        var today = DateTime.Today;
+        var daysUntilDue = (endDate.Value.Date - today).Days;
+
+        if (daysUntilDue < 0)
+        {
+            var daysOverdue = Math.Abs(daysUntilDue);
+            return new OverdueInfoDto
+            {
+                IsOverdue = true,
+                IsDueSoon = false,
+                Message = $"Overdue by {daysOverdue} day{(daysOverdue != 1 ? "s" : "")}"
+            };
+        }
+        else if (daysUntilDue <= 2)
+        {
+            if (daysUntilDue == 0)
+                return new OverdueInfoDto { IsOverdue = false, IsDueSoon = true, Message = "Due today" };
+            else if (daysUntilDue == 1)
+                return new OverdueInfoDto { IsOverdue = false, IsDueSoon = true, Message = "Due tomorrow" };
+            else
+                return new OverdueInfoDto { IsOverdue = false, IsDueSoon = true, Message = $"Due in {daysUntilDue} days" };
+        }
+
+        return new OverdueInfoDto { IsOverdue = false, IsDueSoon = false, Message = "" };
+    }
+
+    private string GetStatus(ProjectItem item)
+    {
+        var statusField = item.fieldValues?.nodes?
+            .FirstOrDefault(f => f.field?.name == "Status" && !string.IsNullOrEmpty(f.name));
+        return statusField?.name ?? string.Empty;
+    }
+
+    private DateTime? GetEndDate(ProjectItem item)
+    {
+        var endDateField = item.fieldValues?.nodes?
+            .FirstOrDefault(f => f.field?.name == "End date" && !string.IsNullOrEmpty(f.date));
+
+        if (endDateField == null || string.IsNullOrEmpty(endDateField.date))
+            return null;
+
+        if (DateTime.TryParse(endDateField.date, out var endDate))
+            return endDate;
+
+        return null;
+    }
+}

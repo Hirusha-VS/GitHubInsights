@@ -1,0 +1,132 @@
+﻿@using Tracker.Client.Dtos
+
+<!-- GitHub Insights Section -->
+<section class="insights-section">
+    <div class="insights-header">
+        <div class="insights-title-row">
+            <h2 class="insights-title">GitHub Insights</h2>
+
+            <a href="@ProjectUrl"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="project-link"
+               title="Open project in GitHub">
+                <svg class="project-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                </svg>
+            </a>
+        </div>
+
+        <div class="insights-meta">
+            Last refresh: @DateTime.Now.ToString("hh:mm tt") | @SelectedOrg - Project #@ProjectNumber
+        </div>
+    </div>
+
+
+    <div class="insights-grid">
+        <div class="insight-card">
+            <div class="insight-label">Total Items</div>
+            <div class="insight-value">@TotalItems</div>
+        </div>
+
+        @foreach (var status in GetAllStatuses())
+        {
+            <div class="insight-card">
+                <div class="insight-label">@status</div>
+                <div class="insight-value">@GetItemsByStatus(status)</div>
+            </div>
+        }
+
+        <div class="insight-card">
+            <div class="insight-label">No Status</div>
+            <div class="insight-value">@GetItemsWithoutStatus()</div>
+        </div>
+
+        <div class="insight-card">
+            <div class="insight-label">Open PRs</div>
+            <div class="insight-value">@GetOpenPullRequests()</div>
+        </div>
+
+        <div class="insight-card">
+            <div class="insight-label">Merged PRs</div>
+            <div class="insight-value">@GetMergedPullRequests()</div>
+        </div>
+
+        <div class="insight-card">
+            <div class="insight-label">Open Issues</div>
+            <div class="insight-value">@GetOpenIssues()</div>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public List<ProjectItem> ProjectItems { get; set; } = new();
+
+    [Parameter]
+    public int TotalItems { get; set; }
+
+    [Parameter]
+    public string SelectedOrg { get; set; } = string.Empty;
+
+    [Parameter]
+    public int ProjectNumber { get; set; }
+
+    [Parameter]
+    public string ProjectUrl { get; set; } = string.Empty;
+
+    // ========== HELPER METHODS (Previously in TaskStatusHelper) ==========
+
+    private List<string> GetAllStatuses()
+    {
+        if (ProjectItems == null) return new List<string>();
+
+        return ProjectItems
+            .SelectMany(item => item.fieldValues?.nodes ?? new List<FieldValue>())
+            .Where(f => f.field?.name == "Status" && !string.IsNullOrEmpty(f.name))
+            .Select(f => f.name!)
+            .Distinct()
+            .OrderBy(s => s)
+            .ToList();
+    }
+
+    private int GetItemsByStatus(string status)
+    {
+        if (ProjectItems == null) return 0;
+        return ProjectItems.Count(item =>
+            item.fieldValues?.nodes?.Any(f =>
+                f.field?.name == "Status" && f.name == status) == true);
+    }
+
+    private int GetItemsWithoutStatus()
+    {
+        if (ProjectItems == null) return 0;
+        return ProjectItems.Count(item =>
+            item.fieldValues?.nodes?.Any(f => f.field?.name == "Status") != true);
+    }
+
+    private int GetOpenPullRequests()
+    {
+        if (ProjectItems == null) return 0;
+        return ProjectItems.Count(i =>
+            i.type == "PULL_REQUEST" &&
+            i.content?.state?.ToLower() == "open");
+    }
+
+    private int GetMergedPullRequests()
+    {
+        if (ProjectItems == null) return 0;
+        return ProjectItems.Count(i =>
+            i.type == "PULL_REQUEST" &&
+            i.content?.merged == true);
+    }
+
+    private int GetOpenIssues()
+    {
+        if (ProjectItems == null) return 0;
+        return ProjectItems.Count(i =>
+            i.type == "ISSUE" &&
+            i.content?.state?.ToLower() == "open");
+    }
+}

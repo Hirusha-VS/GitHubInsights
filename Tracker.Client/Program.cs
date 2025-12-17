@@ -9,8 +9,8 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<GitHubApiService>();
-builder.Services.AddScoped<TaskAnalyticsService>();
-builder.Services.AddScoped<WorkloadCalculationService>();
+//builder.Services.AddScoped<TaskAnalyticsService>();
+//builder.Services.AddScoped<WorkloadCalculationService>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5038/") });
 
 await builder.Build().RunAsync();

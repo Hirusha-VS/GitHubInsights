@@ -1,6 +1,6 @@
-﻿namespace Tracker.Client.Models
+﻿namespace Tracker.Client.Dtos
 {
-    public class DeveloperWorkload
+    public class DeveloperWorkloadDto
     {
         public string Login { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -16,5 +16,6 @@
         public int InProgressPercentage { get; set; }
         public int InReviewPercentage { get; set; }
         public int BacklogPercentage { get; set; }
+         
     }
 }

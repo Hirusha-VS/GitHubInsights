@@ -1,0 +1,87 @@
+﻿@using Tracker.Client.Dtos
+
+<!-- Developer Workload Section -->
+<section class="workload-section">
+    <div class="section-header">
+        <h2 class="section-title">👥 Developer Workload</h2>
+        <div class="section-subtitle">Task distribution and completion status per developer</div>
+    </div>
+
+    <div class="workload-grid">
+        @foreach (var dev in DeveloperWorkloads.OrderByDescending(d => d.TotalTasks))
+        {
+            <div class="developer-card">
+                <div class="developer-header">
+                    <img src="@dev.AvatarUrl" alt="@dev.Name" class="developer-avatar" />
+                    <div class="developer-info">
+                        <div class="developer-name">@dev.Name</div>
+                        <div class="developer-login">@@@dev.Login</div>
+                    </div>
+                    @if (dev.OverdueTasks > 0)
+                    {
+                        <div class="overdue-indicator" title="@dev.OverdueTasks overdue tasks">
+                            ⚠️
+                        </div>
+                    }
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-row">
+                        <span class="stat-label">Total Tasks</span>
+                        <span class="stat-value">@dev.TotalTasks</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Done</span>
+                        <span class="stat-value done">@dev.DoneTasks</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">In Progress</span>
+                        <span class="stat-value in-progress">@dev.InProgressTasks</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">In Review</span>
+                        <span class="stat-value in-review">@dev.InReviewTasks</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Backlog</span>
+                        <span class="stat-value backlog">@dev.BacklogTasks</span>
+                    </div>
+                    @if (dev.OverdueTasks > 0)
+                    {
+                        <div class="stat-row highlight">
+                            <span class="stat-label">⚠️ Overdue</span>
+                            <span class="stat-value overdue">@dev.OverdueTasks</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>Completion Rate</span>
+                        <span class="progress-percentage">@dev.CompletionPercentage%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: @(dev.CompletionPercentage)%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-breakdown">
+                        <div class="breakdown-segment done" style="width: @(dev.DonePercentage)%"
+                             title="Done: @dev.DoneTasks"></div>
+                        <div class="breakdown-segment in-review" style="width: @(dev.InReviewPercentage)%"
+                             title="In Review: @dev.InReviewTasks"></div>
+                        <div class="breakdown-segment in-progress" style="width: @(dev.InProgressPercentage)%"
+                             title="In Progress: @dev.InProgressTasks"></div>
+                        <div class="breakdown-segment backlog" style="width: @(dev.BacklogPercentage)%"
+                             title="Backlog: @dev.BacklogTasks"></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public List<DeveloperWorkloadDto> DeveloperWorkloads { get; set; } = new();
+}

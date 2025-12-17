@@ -1,0 +1,239 @@
+﻿/* DeveloperWorkloadCard.razor.css - Scoped styles for developer workload section */
+
+.workload-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section header */
+.section-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.section-title {
+    color: #1a1a1a;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.section-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* Workload cards container */
+.workload-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Individual developer card */
+.developer-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+    .developer-card:hover {
+        border-color: #2196f3;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+        transform: translateY(-2px);
+    }
+
+/* Developer header */
+.developer-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+}
+
+.developer-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #2196f3;
+}
+
+.developer-info {
+    flex: 1;
+}
+
+.developer-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+}
+
+.developer-login {
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.overdue-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 24px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* Stats section */
+.stats-section {
+    margin-bottom: 16px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    margin-bottom: 4px;
+}
+
+    .stat-row.highlight {
+        background: #fef2f2;
+        border-left: 3px solid #ef4444;
+        padding-left: 8px;
+        border-radius: 4px;
+    }
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #f5f5f5;
+    color: #1a1a1a;
+}
+
+    .stat-value.done {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .stat-value.in-progress {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .stat-value.in-review {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .stat-value.backlog {
+        background: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .stat-value.overdue {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+/* Progress section */
+.progress-section {
+    margin-top: 12px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.progress-percentage {
+    font-size: 1rem;
+    color: #2196f3;
+}
+
+.progress-bar-container {
+    margin-bottom: 8px;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Progress breakdown */
+.progress-breakdown {
+    display: flex;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.breakdown-segment {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+    .breakdown-segment.done {
+        background: #4caf50;
+    }
+
+    .breakdown-segment.in-review {
+        background: #ff9800;
+    }
+
+    .breakdown-segment.in-progress {
+        background: #2196f3;
+    }
+
+    .breakdown-segment.backlog {
+        background: #9c27b0;
+    }

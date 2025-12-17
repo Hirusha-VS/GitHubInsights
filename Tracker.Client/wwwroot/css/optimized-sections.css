@@ -1,0 +1,713 @@
+﻿/* ============================================ */
+/* OPTIMIZED SECTION STYLES FOR 3-COLUMN LAYOUT */
+/* ============================================ */
+
+/* ============================================ */
+/* COMMON SECTION STYLES */
+/* ============================================ */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+    .section-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+.today-date {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* ============================================ */
+/* LEFT COLUMN: GITHUB INSIGHTS */
+/* ============================================ */
+
+.insights-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    position: sticky;
+    top: 0;
+}
+
+.insights-header {
+    margin-bottom: 20px;
+}
+
+    .insights-header h2 {
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+    }
+
+.insights-meta {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.insights-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.insight-card {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .insight-card:hover {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateX(4px);
+    }
+
+.insight-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.insight-value {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* ============================================ */
+/* MIDDLE COLUMN: TODAY'S OVERVIEW */
+/* ============================================ */
+
+.today-tasks-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.today-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.today-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 2px solid;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+    .today-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Critical - Due Today Card */
+    .today-card.due-today-critical {
+        background: #fef2f2;
+        border-color: #fca5a5;
+        border-left: 4px solid #dc2626;
+    }
+
+        .today-card.due-today-critical .today-value {
+            color: #dc2626;
+        }
+
+    /* Warning - Due Soon Card */
+    .today-card.due-soon {
+        background: #fef3c7;
+        border-color: #fcd34d;
+        border-left: 4px solid #f59e0b;
+    }
+
+        .today-card.due-soon .today-value {
+            color: #f59e0b;
+        }
+
+    /* Overdue Card */
+    .today-card.overdue {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        border-left: 4px solid #ef4444;
+    }
+
+        .today-card.overdue .today-value {
+            color: #ef4444;
+        }
+
+.today-info {
+    width: 100%;
+}
+
+.today-label {
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.today-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Urgent Tasks List */
+.urgent-tasks-list {
+    margin-top: 20px;
+}
+
+    .urgent-tasks-list h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+    }
+
+.urgent-tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.urgent-task-card {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .urgent-task-card:hover {
+        border-color: #2196f3;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+        transform: translateY(-1px);
+    }
+
+.urgent-task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.urgent-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+    .urgent-badge.overdue {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .urgent-badge.due-today,
+    .urgent-badge.due-soon {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+.urgent-task-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.urgent-task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.assignee-avatar-small {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-right: 4px;
+}
+
+.more-assignees {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #666;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 20px;
+}
+
+.unassigned-label {
+    font-size: 0.7rem;
+    color: #999;
+    font-style: italic;
+}
+
+.item-number {
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.task-type-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+    .task-type-badge.issue {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .task-type-badge.pr {
+        background: #ddd6fe;
+        color: #5b21b6;
+    }
+
+    .task-type-badge.draft {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+/* ============================================ */
+/* MIDDLE COLUMN: DEVELOPER WORKLOAD */
+/* ============================================ */
+
+.workload-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.workload-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+.workload-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.workload-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+    .workload-card:hover {
+        border-color: #2196f3;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+        transform: translateY(-2px);
+    }
+
+.developer-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.developer-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #2196f3;
+}
+
+.developer-info {
+    flex: 1;
+}
+
+.developer-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+}
+
+.developer-login {
+    font-size: 0.75rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Workload Stats */
+.workload-stats {
+    margin-bottom: 16px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    margin-bottom: 4px;
+}
+
+    .stat-row.highlight {
+        background: #fef2f2;
+        border-left: 3px solid #ef4444;
+        padding-left: 8px;
+        border-radius: 4px;
+    }
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #f5f5f5;
+    color: #1a1a1a;
+}
+
+    .stat-value.done {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .stat-value.in-progress {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .stat-value.in-review {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .stat-value.backlog {
+        background: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .stat-value.overdue {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+/* Progress Section */
+.progress-section {
+    margin-top: 12px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.progress-percentage {
+    font-size: 1rem;
+    color: #2196f3;
+}
+
+.progress-bar-container {
+    margin-bottom: 8px;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progress-breakdown {
+    display: flex;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.breakdown-segment {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+    .breakdown-segment.done {
+        background: #4caf50;
+    }
+
+    .breakdown-segment.in-review {
+        background: #ff9800;
+    }
+
+    .breakdown-segment.in-progress {
+        background: #2196f3;
+    }
+
+    .breakdown-segment.backlog {
+        background: #9c27b0;
+    }
+
+/* ============================================ */
+/* RIGHT COLUMN: TODAY'S TASKS LIST */
+/* ============================================ */
+
+.today-tasks-list-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    height: 100%;
+}
+
+.today-tasks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.today-task-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .today-task-card:hover {
+        border-color: #2196f3;
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .today-task-card.overdue {
+        border-left: 3px solid #f44336;
+        background: #ffebee;
+    }
+
+    .today-task-card.due-soon {
+        border-left: 3px solid #ff9800;
+        background: #fff3e0;
+    }
+
+.today-task-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.task-status-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+    .task-status-badge.status-backlog {
+        background: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .task-status-badge.status-in-progress {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .task-status-badge.status-in-review {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    .task-status-badge.status-done {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+.today-task-number {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.today-task-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.today-task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.today-task-assignees {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+}
+
+.assignee-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px 2px 2px;
+    background: #f5f5f5;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+    .assignee-chip:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+    }
+
+.assignee-chip-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.assignee-chip-name {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #1a1a1a;
+}
+
+.unassigned-chip {
+    padding: 4px 10px;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: #999;
+    font-style: italic;
+}
+
+.today-due-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+    .today-due-badge.overdue {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .today-due-badge.due-today,
+    .today-due-badge.due-soon {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+/* No tasks message */
+.no-tasks-today {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+    border-radius: 8px;
+    border: 2px dashed #cbd5e1;
+}
+
+.no-tasks-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    opacity: 0.4;
+}
+
+.no-tasks-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.no-tasks-subtext {
+    font-size: 0.85rem;
+    color: #666;
+}

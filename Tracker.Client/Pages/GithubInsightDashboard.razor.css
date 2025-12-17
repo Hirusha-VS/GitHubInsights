@@ -1,0 +1,243 @@
+﻿/* Home.razor.css - Scoped styles for main dashboard layout */
+
+/* Dashboard container */
+.dashboard-container {
+    width: 100vw;
+    height: 100vh;
+    padding: 20px;
+    background: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* 3-column grid layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 18%) minmax(700px, 1fr) minmax(340px, 26%);
+    gap: 24px;
+    height: calc(100vh - 80px);
+    width: 100%;
+}
+
+/* Column containers */
+.left-column,
+.middle-column,
+.right-column {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+/* Middle column: side-by-side layout */
+.middle-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+    /* Custom scrollbar */
+    .left-column::-webkit-scrollbar,
+    .middle-column::-webkit-scrollbar,
+    .right-column::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .left-column::-webkit-scrollbar-track,
+    .middle-column::-webkit-scrollbar-track,
+    .right-column::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    .left-column::-webkit-scrollbar-thumb,
+    .middle-column::-webkit-scrollbar-thumb,
+    .right-column::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+
+        .left-column::-webkit-scrollbar-thumb:hover,
+        .middle-column::-webkit-scrollbar-thumb:hover,
+        .right-column::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+/* Firefox scrollbar */
+.left-column,
+.middle-column,
+.right-column {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.spinner-ring {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Error state */
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 20px;
+}
+
+.error-message {
+    color: #ef4444;
+    font-weight: 600;
+    text-align: center;
+    padding: 16px 24px;
+    background: #fee2e2;
+    border-radius: 8px;
+    max-width: 600px;
+}
+
+.retry-button {
+    padding: 12px 32px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .retry-button:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+/* Empty state */
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.2rem;
+    color: #64748b;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 1920px) {
+    .dashboard-grid {
+        grid-template-columns: minmax(320px, 16%) minmax(900px, 1fr) minmax(400px, 24%);
+        gap: 32px;
+    }
+}
+
+@media (min-width: 1600px) and (max-width: 1919px) {
+    .dashboard-grid {
+        grid-template-columns: minmax(300px, 18%) minmax(800px, 1fr) minmax(360px, 26%);
+        gap: 28px;
+    }
+}
+
+@media (min-width: 1366px) and (max-width: 1599px) {
+    .dashboard-grid {
+        grid-template-columns: minmax(280px, 19%) minmax(700px, 1fr) minmax(340px, 27%);
+        gap: 24px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1365px) {
+    .dashboard-grid {
+        grid-template-columns: minmax(260px, 20%) minmax(600px, 1fr) minmax(320px, 28%);
+        gap: 20px;
+    }
+
+    .dashboard-container {
+        padding: 16px;
+    }
+
+    /* Stack middle column on smaller desktops */
+    .middle-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .dashboard-grid {
+        grid-template-columns: 240px 1fr 300px;
+        gap: 16px;
+    }
+
+    .dashboard-container {
+        padding: 12px;
+    }
+
+    /* Stack middle column */
+    .middle-column {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Warning for small screens */
+@media (max-width: 1023px) {
+    .dashboard-grid {
+        display: none;
+    }
+
+    .dashboard-container::before {
+        content: "⚠️ This dashboard requires a minimum screen width of 1024px. Please use a desktop computer or increase your browser window size.";
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2rem;
+        color: #64748b;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+}

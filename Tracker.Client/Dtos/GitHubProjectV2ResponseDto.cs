@@ -4,64 +4,64 @@ namespace Tracker.Client.Dtos
 {
     public class GitHubProjectV2ResponseDto
     {
-        public Data data { get; set; }
+        public Data? data { get; set; }
     }
 
     public class Data
     {
-        public Organization organization { get; set; }
+        public Organization? organization { get; set; }
     }
 
     public class Organization
     {
-        public ProjectV2 projectV2 { get; set; }
+        public ProjectV2? projectV2 { get; set; }
     }
 
     public class ProjectV2
     {
-        public string id { get; set; }
-        public string title { get; set; }
-        public string url { get; set; }
-        public ViewConnection views { get; set; }
-        public ItemConnection items { get; set; }
+        public string? id { get; set; }
+        public string? title { get; set; }
+        public string? url { get; set; }
+        public ViewConnection? views { get; set; }
+        public ItemConnection? items { get; set; }
     }
 
     public class ViewConnection
     {
-        public List<ProjectView> nodes { get; set; } = new();
+        public List<ProjectView>? nodes { get; set; } = new();
     }
 
     public class ProjectView
     {
-        public string id { get; set; }
-        public string name { get; set; }
-        public int number { get; set; }
-        public string layout { get; set; }
+        public string? id { get; set; }
+        public string? name { get; set; }
+        public int? number { get; set; }
+        public string? layout { get; set; }
     }
 
     public class ItemConnection
     {
-        public List<ProjectItem> nodes { get; set; } = new();
-        public PageInfo pageInfo { get; set; } = new();
+        public List<ProjectItem>? nodes { get; set; } = new();
+        public PageInfo? pageInfo { get; set; } = new();
     }
 
     public class PageInfo
     {
-        public bool hasNextPage { get; set; }
-        public string endCursor { get; set; }
+        public bool? hasNextPage { get; set; }
+        public string? endCursor { get; set; }
     }
 
     public class ProjectItem
     {
-        public string id { get; set; }
-        public string type { get; set; }
+        public string? id { get; set; }
+        public string? type { get; set; }
         public Content? content { get; set; }
-        public FieldValueConnection fieldValues { get; set; }
+        public FieldValueConnection? fieldValues { get; set; }
     }
 
     public class Content
     {
-        public string title { get; set; }
+        public string? title { get; set; }
         public string? url { get; set; }
         public int? number { get; set; }
         public string? state { get; set; }
@@ -71,25 +71,25 @@ namespace Tracker.Client.Dtos
 
     public class AssigneeConnection
     {
-        public List<Assignee> nodes { get; set; } = new();
+        public List<Assignee>? nodes { get; set; } = new();
     }
 
     public class Assignee
     {
-        public string login { get; set; }
-        public string name { get; set; }
-        public string avatarUrl { get; set; }
+        public string? login { get; set; }
+        public string? name { get; set; }
+        public string? avatarUrl { get; set; }
     }
 
     public class FieldValueConnection
     {
-        public List<FieldValue> nodes { get; set; } = new();
+        public List<FieldValue>? nodes { get; set; } = new();
     }
 
     public class FieldValue
     {
-        public string __typename { get; set; }
-        public Field field { get; set; }
+        public string? __typename { get; set; }
+        public Field? field { get; set; }
 
         // For TextValue
         public string? text { get; set; }
@@ -109,20 +109,20 @@ namespace Tracker.Client.Dtos
 
     public class UserConnection
     {
-        public List<User> nodes { get; set; } = new();
+        public List<User>? nodes { get; set; } = new();
     }
 
     public class User
     {
-        public string login { get; set; }
-        public string name { get; set; }
-        public string avatarUrl { get; set; }
+        public string? login { get; set; }
+        public string? name { get; set; }
+        public string? avatarUrl { get; set; }
     }
 
     public class Field
     {
-        public string __typename { get; set; }
-        public string name { get; set; }
+        public string? __typename { get; set; }
+        public string? name { get; set; }
     }
 
 }
